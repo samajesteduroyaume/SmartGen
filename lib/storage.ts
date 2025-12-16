@@ -1,12 +1,15 @@
+import { ContractOptions, ERC721Options, DAOOptions, ERC1155Options, VestingOptions } from "./types";
+
 export interface DeployedContract {
     id: string;
     name: string;
     symbol: string;
     address: string;
     network: string;
-    type: "ERC20" | "ERC721" | "DAO";
+    type: "ERC20" | "ERC721" | "ERC1155" | "DAO" | "Vesting";
     date: string;
     txHash: string;
+    options: ContractOptions | ERC721Options | ERC1155Options | DAOOptions | VestingOptions;
 }
 
 const STORAGE_KEY = "smartgen_contracts";

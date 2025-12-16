@@ -37,6 +37,15 @@ export function generateERC721(options: ERC721Options): string {
         inheritance.push("ERC721URIStorage");
     }
 
+    if (options.features.royalties) {
+        imports.push("@openzeppelin/contracts/token/common/ERC2981.sol");
+        inheritance.push("ERC2981");
+        // Set default royalty in constructor. 
+        // options.royaltyBps (e.g. 500 for 5%)
+        // We assume msg.sender (initialOwner) receives the royalties initially.
+        constructorBody.push(`_setDefaultRoyalty(msg.sender, ${options.royaltyBps || 500});`);
+    }
+
     // Minting Logic
     if (options.payment && options.payment.mintPrice > 0) {
         // Auto-Increment + Paid Mint
@@ -46,9 +55,19 @@ export function generateERC721(options: ERC721Options): string {
         functions.push(`
     uint256 private _nextTokenId;
     uint256 public constant MINT_PRICE = ${priceInWei};
+    ${options.features.whitelist ? "mapping(address => bool) public allowlist;" : ""}
+
+    ${options.features.whitelist ? `
+    function setAllowlist(address[] calldata accounts, bool allowed) external onlyOwner {
+        for(uint256 i = 0; i < accounts.length; i++) {
+            allowlist[accounts[i]] = allowed;
+        }
+    }
+    ` : ""}
 
     function publicMint(uint256 qty) public payable {
         require(msg.value >= MINT_PRICE * qty, "Insufficient funds");
+        ${options.features.whitelist ? 'require(allowlist[msg.sender], "Not in allowlist");' : ""}
         for(uint256 i = 0; i < qty; i++) {
             uint256 tokenId = _nextTokenId++;
             _safeMint(msg.sender, tokenId);
@@ -81,7 +100,7 @@ export function generateERC721(options: ERC721Options): string {
     }
 
     // Overrides required by Solidity
-    if (options.features.enumerable || options.features.uriStorage || options.features.pausable) {
+    if (options.features.enumerable || options.features.uriStorage || options.features.pausable || options.features.royalties) {
         // Build overrides logic similar to Wizard
         // Simple heuristic for MVP
         const updateOverrides = ["ERC721"];
@@ -120,30 +139,23 @@ export function generateERC721(options: ERC721Options): string {
              `);
         }
 
-        if (options.features.enumerable) {
+        if (options.features.enumerable || options.features.uriStorage || options.features.royalties) {
+            const supportOverrides = ["ERC721"];
+            if (options.features.enumerable) supportOverrides.push("ERC721Enumerable");
+            if (options.features.uriStorage) supportOverrides.push("ERC721URIStorage");
+            if (options.features.royalties) supportOverrides.push("ERC2981");
+
             functions.push(`
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable${options.features.uriStorage ? ", ERC721URIStorage" : ""})
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
-             `);
-        } else if (options.features.uriStorage) {
-            functions.push(`
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
+        override(${supportOverrides.join(", ")})
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
     }
              `);
         }
-
     }
 
     // Construct the file

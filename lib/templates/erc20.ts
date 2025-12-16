@@ -37,6 +37,18 @@ export function generateERC20(options: ContractOptions): string {
     `);
     }
 
+    // Capped (Max Supply)
+    if (options.features.capped && options.cap && options.cap > 0) {
+        imports.push("@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol");
+        inheritance.push("ERC20Capped");
+        // ERC20Capped constructor requires cap * 10^decimals
+        // We assume 18 decimals for simplicity in this generator or use decimals()
+        // But constructor runs before decimals() override? No, decimals is virtual.
+        // Standard OZ ERC20Capped constructor argument is uint256 cap. 
+        // We will pass it in the constructor of our contract to the parent.
+        constructorBody.unshift(`// Max Supply defined in constructor for ERC20Capped`);
+    }
+
     // Public Mint (Payable)
     if (options.payment && options.payment.mintPrice > 0) {
         // Convert ETH price to Wei (avoid scientific notation)
@@ -74,6 +86,32 @@ export function generateERC20(options: ContractOptions): string {
         constructorBody.push(`_mint(msg.sender, ${options.premint} * 10 ** decimals());`);
     }
 
+    // Update Override for Capped
+    // ERC20Capped requires overriding _update (OZ 5.x) or _mint (OZ 4.x)
+    // Assuming OZ 5.x we need to override _update
+    if (options.features.capped) {
+        // If we already have _update from Pausable, we need to merge
+        // Find if we added _update already
+        const existingUpdateIndex = functions.findIndex(f => f.includes("function _update"));
+        if (existingUpdateIndex >= 0) {
+            // Replace existing _update to include ERC20Capped
+            functions[existingUpdateIndex] = functions[existingUpdateIndex].replace(
+                /override\(ERC20.*?\)/,
+                `override(ERC20${options.features.pausable ? ", ERC20Pausable" : ""}, ERC20Capped)`
+            );
+        } else {
+            // Add new _update
+            functions.push(`
+    function _update(address from, address to, uint256 value)
+        internal
+        override(ERC20, ERC20Capped)
+    {
+        super._update(from, to, value);
+    }
+    `);
+        }
+    }
+
     // Construct the file
     return `// SPDX-License-Identifier: ${options.security.license}
 pragma solidity ^0.8.20;
@@ -84,6 +122,7 @@ contract ${options.name.replace(/\s+/g, "")} is ${inheritance.join(", ")} {
     constructor(${options.security.accessControl === "ownable" ? "address initialOwner" : ""})
         ERC20("${options.name}", "${options.symbol}")
         ${options.security.accessControl === "ownable" ? "Ownable(initialOwner)" : ""}
+        ${options.features.capped && options.cap ? `ERC20Capped(${options.cap} * 10 ** decimals())` : ""}
     {
 ${constructorBody.join("\n        ")}
     }

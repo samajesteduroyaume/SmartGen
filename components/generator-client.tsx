@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { generateERC20 } from "@/lib/templates/erc20";
 import { generateERC721 } from "@/lib/templates/erc721";
 import { generateDAO } from "@/lib/templates/dao";
-import { ContractOptions, ERC721Options, DAOOptions } from "@/lib/types";
+import { generateERC1155 } from "@/lib/templates/erc1155";
+import { generateVesting } from "@/lib/templates/vesting";
+import { ContractOptions, ERC721Options, DAOOptions, ERC1155Options, VestingOptions } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -14,11 +16,13 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Download, Rocket, ShieldCheck, Coins, Image as ImageIcon, Vote, Loader2 } from "lucide-react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useSendTransaction, useWaitForTransactionReceipt, useWalletClient } from "wagmi";
+import { useAccount, useSendTransaction, useWaitForTransactionReceipt, useWalletClient, useSwitchChain } from "wagmi";
 import { parseEther } from "viem";
 import AiAssistant from "@/components/ai-assistant";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { mainnet, sepolia, polygon, base, arbitrum } from "wagmi/chains";
 
-type ContractType = "ERC20" | "ERC721" | "DAO";
+type ContractType = "ERC20" | "ERC721" | "ERC1155" | "DAO" | "Vesting";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function GeneratorClient({ dictionary }: { dictionary: any }) {
@@ -39,7 +43,9 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
             permit: false,
             votes: false,
             flashMint: false,
+            capped: false,
         },
+        cap: 1000000000,
         security: {
             license: "MIT",
             accessControl: "ownable",
@@ -64,8 +70,12 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
             uriStorage: true,
             permit: false,
             votes: false,
-            flashMint: false
+            flashMint: false,
+            royalties: false,
+            whitelist: false,
+            capped: false,
         },
+        royaltyBps: 500, // 5%
         security: {
             license: "MIT",
             accessControl: "ownable",
@@ -93,6 +103,28 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
         },
     });
 
+    const [erc1155Options, setErc1155Options] = useState<ERC1155Options>({
+        name: "MyItems",
+        baseURI: "https://my-api.com/token/",
+        features: {
+            mintable: true,
+            burnable: true,
+            pausable: false,
+            supply: true,
+            updatableURI: true,
+            ownable: true,
+        },
+        security: {
+            accessControl: "ownable"
+        }
+    });
+
+    const [vestingOptions, setVestingOptions] = useState<VestingOptions>({
+        beneficiary: "0x...",
+        start: Math.floor(Date.now() / 1000),
+        duration: 31536000 // 1 year
+    });
+
 
     const [code, setCode] = useState("");
 
@@ -108,6 +140,10 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
             setCode(generateERC20(options));
         } else if (contractType === "ERC721") {
             setCode(generateERC721(erc721Options));
+        } else if (contractType === "ERC1155") {
+            setCode(generateERC1155(erc1155Options));
+        } else if (contractType === "Vesting") {
+            setCode(generateVesting(vestingOptions));
         } else {
             setCode(generateDAO(daoOptions));
         }
@@ -202,6 +238,24 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
         return daoOptions.name;
     }
 
+    const { chains, switchChain } = useSwitchChain();
+    // Default to mainnet or first available
+    const [selectedChainId, setSelectedChainId] = useState<string>(String(mainnet.id));
+
+    // Update selected chain if wallet creates connection
+    useEffect(() => {
+        if (walletClient && walletClient.chain) {
+            setSelectedChainId(String(walletClient.chain.id));
+        }
+    }, [walletClient]);
+
+    const handleChainChange = (chainId: string) => {
+        setSelectedChainId(chainId);
+        if (switchChain) {
+            switchChain({ chainId: Number(chainId) });
+        }
+    };
+
     const handleDownload = () => {
         const blob = new Blob([code], { type: "text/plain" });
         const url = URL.createObjectURL(blob);
@@ -255,15 +309,36 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
             // We'll save the "hash" as address for now/placeholder or simply not save address until resolved.
 
             import("@/lib/storage").then(({ saveContract }) => {
+                let currentOptions;
+                let symbol = "UNK";
+
+                if (contractType === "ERC20") {
+                    currentOptions = options;
+                    symbol = options.symbol;
+                } else if (contractType === "ERC721") {
+                    currentOptions = erc721Options;
+                    symbol = erc721Options.symbol;
+                } else if (contractType === "ERC1155") {
+                    currentOptions = erc1155Options;
+                    symbol = "ERC1155";
+                } else if (contractType === "Vesting") {
+                    currentOptions = vestingOptions;
+                    symbol = "VEST";
+                } else {
+                    currentOptions = daoOptions;
+                    symbol = "DAO";
+                }
+
                 saveContract({
                     id: crypto.randomUUID(),
                     name: getCurrentName(),
-                    symbol: contractType === "ERC20" ? options.symbol : (contractType === "ERC721" ? erc721Options.symbol : "DAO"),
-                    address: "Pending...", // We don't have address yet
+                    symbol: symbol,
+                    address: "0x...", // We don't have address yet. Ideally we wait for receipt.
                     network: walletClient.chain.name, // e.g. "Sepolia"
                     type: contractType,
                     date: new Date().toISOString(),
-                    txHash: hash
+                    txHash: hash,
+                    options: currentOptions
                 });
             });
 
@@ -287,6 +362,22 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
                         {dict.title}
                     </h1>
                     <p className="text-sm text-muted-foreground">{dict.subtitle}</p>
+                </div>
+
+                <div className="mb-6">
+                    <Label className="mb-2 block">Target Network</Label>
+                    <Select value={selectedChainId} onValueChange={handleChainChange}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Network" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {chains.map((chain) => (
+                                <SelectItem key={chain.id} value={String(chain.id)}>
+                                    {chain.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 <div className="flex gap-2 mb-6">
@@ -339,15 +430,28 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
                         )}
 
                         {contractType === "ERC20" && (
-                            <div className="grid w-full items-center gap-1.5">
-                                <Label htmlFor="premint">{dict.labels.premint}</Label>
-                                <Input
-                                    id="premint"
-                                    type="number"
-                                    value={options.premint}
-                                    onChange={(e) => handleInputChange("premint", Number(e.target.value))}
-                                />
-                            </div>
+                            <>
+                                <div className="grid w-full items-center gap-1.5">
+                                    <Label htmlFor="premint">{dict.labels.premint}</Label>
+                                    <Input
+                                        id="premint"
+                                        type="number"
+                                        value={options.premint}
+                                        onChange={(e) => handleInputChange("premint", Number(e.target.value))}
+                                    />
+                                </div>
+                                {options.features.capped && (
+                                    <div className="grid w-full items-center gap-1.5">
+                                        <Label htmlFor="cap">Max Supply (Cap)</Label>
+                                        <Input
+                                            id="cap"
+                                            type="number"
+                                            value={options.cap}
+                                            onChange={(e) => handleInputChange("cap", Number(e.target.value))}
+                                        />
+                                    </div>
+                                )}
+                            </>
                         )}
 
                         {contractType === "ERC721" && (
@@ -424,6 +528,16 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
                                         onCheckedChange={() => handleFeatureChange("pausable")}
                                     />
                                 </div>
+                                {contractType === "ERC20" && (
+                                    <div className="flex items-center justify-between">
+                                        <Label htmlFor="capped" className="cursor-pointer">Capped (Max Supply)</Label>
+                                        <Switch
+                                            id="capped"
+                                            checked={options.features.capped}
+                                            onCheckedChange={() => handleFeatureChange("capped")}
+                                        />
+                                    </div>
+                                )}
                             </>
                         )}
 
@@ -443,6 +557,22 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
                                         id="enumerable"
                                         checked={erc721Options.features.enumerable}
                                         onCheckedChange={() => handleFeatureChange("enumerable")}
+                                    />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="royalties" className="cursor-pointer">Royalties (EIP-2981)</Label>
+                                    <Switch
+                                        id="royalties"
+                                        checked={erc721Options.features.royalties}
+                                        onCheckedChange={() => handleFeatureChange("royalties")}
+                                    />
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="whitelist" className="cursor-pointer">Whitelist (Allowlist)</Label>
+                                    <Switch
+                                        id="whitelist"
+                                        checked={erc721Options.features.whitelist}
+                                        onCheckedChange={() => handleFeatureChange("whitelist")}
                                     />
                                 </div>
                             </>
@@ -474,6 +604,21 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
 
                     <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-foreground/80">Monetization</h3>
+
+                        {contractType === "ERC721" && erc721Options.features.royalties && (
+                            <div className="grid w-full items-center gap-1.5">
+                                <Label htmlFor="royaltyBps">Royalties (Basis Points)</Label>
+                                <Input
+                                    id="royaltyBps"
+                                    type="number"
+                                    placeholder="500 = 5%"
+                                    value={erc721Options.royaltyBps}
+                                    onChange={(e) => handleInputChange("royaltyBps", Number(e.target.value))}
+                                />
+                                <p className="text-xs text-muted-foreground">Example: 500 = 5%, 1000 = 10%.</p>
+                            </div>
+                        )}
+
                         <div className="grid w-full items-center gap-1.5">
                             <Label htmlFor="mintPrice">{dict.labels?.mintPrice || "Public Mint Price (ETH)"}</Label>
                             <Input

@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { DeployedContract, getContracts, deleteContract } from "@/lib/storage";
-import { Plus, LayoutDashboard, Copy, Trash2, ExternalLink, Box } from "lucide-react";
+import { Plus, LayoutDashboard, Copy, Trash2, ExternalLink, Box, Settings } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AdminControls } from "@/components/admin-controls";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function DashboardClient({ dictionary, lang }: { dictionary: any, lang: string }) {
@@ -98,6 +100,24 @@ export default function DashboardClient({ dictionary, lang }: { dictionary: any,
 
                                 <h3 className="text-lg font-bold truncate" title={contract.name}>{contract.name}</h3>
                                 <div className="text-sm font-mono text-muted-foreground mb-4">{contract.symbol}</div>
+
+                                {/* Manage Button */}
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="outline" size="sm" className="w-full mb-4">
+                                            <Settings className="w-4 h-4 mr-2" /> Manage Contract
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="max-w-2xl bg-background border-border">
+                                        <DialogHeader>
+                                            <DialogTitle>Mange Only {contract.name}</DialogTitle>
+                                            <DialogDescription>
+                                                Interact with your deployed contract directly. Ensure you are connected with the owner wallet.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <AdminControls contract={contract} />
+                                    </DialogContent>
+                                </Dialog>
 
                                 <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto pt-4 border-t border-border/30">
                                     <span>{new Date(contract.date).toLocaleDateString()}</span>
