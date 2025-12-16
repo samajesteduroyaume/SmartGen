@@ -17,7 +17,7 @@ function getLocale(request: Request): string {
     return match(languages, locales, defaultLocale);
 }
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
     // Check if there is any supported locale in the pathname
     const { pathname } = request.nextUrl;
     const pathnameHasLocale = locales.some(
@@ -36,9 +36,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
     matcher: [
-        // Skip all internal paths (_next)
-        "/((?!_next).*)",
-        // Optional: only run on root (/)
-        // '/'
+        // Skip all internal paths (_next) AND API routes
+        "/((?!_next|api|.*\\..*).*)",
     ],
 };

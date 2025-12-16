@@ -18,7 +18,6 @@ import { Download, Rocket, ShieldCheck, Coins, Image as ImageIcon, Vote, Loader2
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useSendTransaction, useWaitForTransactionReceipt, useWalletClient, useSwitchChain } from "wagmi";
 import { parseEther } from "viem";
-import AiAssistant from "@/components/ai-assistant";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { mainnet, sepolia, polygon, base, arbitrum } from "wagmi/chains";
 
@@ -355,7 +354,7 @@ export default function GeneratorClient({ dictionary }: { dictionary: any }) {
 
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row relative">
-            <AiAssistant />
+            {/* AiAssistant is now global in layout */}
             <aside className="w-full md:w-1/3 lg:w-1/4 border-r border-border custom-scrollbar overflow-y-auto p-6 bg-card/30">
                 <div className="mb-8">
                     <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent">
