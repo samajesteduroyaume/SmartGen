@@ -1,0 +1,64 @@
+{
+    "common": {
+        "login": "Iniciar Sesión",
+        "getStarted": "Empezar",
+        "features": "Características",
+        "pricing": "Precios",
+        "templates": "Plantillas",
+        "download": "Descargar (.sol)",
+        "deploy": "Desplegar (Testnet)",
+        "security": "Seguridad",
+        "audit_desc": "Usa contratos OpenZeppelin 5.x. Plantillas auditadas.",
+        "tutorial": "Tutorial",
+        "dashboard": "Panel de Control"
+    },
+    "tutorial": {
+        "title": "Cómo usar el Generador",
+        "step1_title": "Elige tu Estándar",
+        "step1_desc": "Selecciona ERC20 (Tokens), ERC721 (NFTs) o Governor (DAO) según tus necesidades.",
+        "step2_title": "Personaliza",
+        "step2_desc": "Define nombre, símbolo y activa funciones como Mintable o Pausable.",
+        "step3_title": "Descargar o Desplegar",
+        "step3_desc": "Obtén el código fuente o despliega directamente en Testnet para probar."
+    },
+    "dashboard": {
+        "title": "Panel de Control",
+        "welcome": "Bienvenido a tu espacio",
+        "no_contracts": "Aún no has creado ningún contrato.",
+        "create_first": "Crea tu primer contrato",
+        "my_contracts": "Mis Contratos Recientes"
+    },
+    "landing": {
+        "hero_title": "Genera Smart Contracts Seguros en Segundos",
+        "hero_subtitle": "Sin código. Despliega tokens, NFTs y DAOs listos para auditoría con nuestro constructor.",
+        "cta_new": "Nuevo Contrato",
+        "cta_view": "Ver Plantillas",
+        "feat_instant_title": "Generación Instantánea",
+        "feat_instant_desc": "Obtén tu código Solidity al instante. Optimizado para gas y seguridad.",
+        "feat_audit_title": "Pre-Auditado",
+        "feat_audit_desc": "Plantillas verificadas por expertos para prevenir vulnerabilidades comunes.",
+        "feat_custom_title": "Personalización Total",
+        "feat_custom_desc": "Personaliza suministro, permisos y características con una interfaz simple."
+    },
+    "generator": {
+        "title": "Generador",
+        "subtitle": "Personaliza tu Smart Contract",
+        "preview": "Vista Previa",
+        "labels": {
+            "name": "Nombre",
+            "symbol": "Símbolo",
+            "premint": "Cantidad Premint",
+            "baseURI": "URI Base",
+            "votingDelay": "Retraso Votación (bloques)",
+            "votingPeriod": "Periodo Votación (bloques)",
+            "proposalThreshold": "Umbral Propuesta",
+            "mintable": "Mintable",
+            "burnable": "Burnable",
+            "pausable": "Pausable",
+            "ownable": "Ownable",
+            "uriStorage": "Almacenamiento URI",
+            "enumerable": "Enumerable",
+            "timelock": "Controlador Timelock"
+        }
+    }
+}

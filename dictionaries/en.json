@@ -1,0 +1,64 @@
+{
+    "common": {
+        "login": "Login",
+        "getStarted": "Get Started",
+        "features": "Features",
+        "pricing": "Pricing",
+        "templates": "Templates",
+        "download": "Download (.sol)",
+        "deploy": "Deploy (Testnet)",
+        "security": "Security",
+        "audit_desc": "Uses OpenZeppelin 5.x contracts. Audited templates.",
+        "tutorial": "Tutorial",
+        "dashboard": "Dashboard"
+    },
+    "tutorial": {
+        "title": "How to use the Generator",
+        "step1_title": "Choose your Standard",
+        "step1_desc": "Select ERC20 (Tokens), ERC721 (NFTs), or Governor (DAO) depending on your needs.",
+        "step2_title": "Customize",
+        "step2_desc": "Define name, symbol, and toggle features like Mintable or Pausable.",
+        "step3_title": "Download or Deploy",
+        "step3_desc": "Get the source code or deploy directly to Testnet for testing."
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "welcome": "Welcome to your space",
+        "no_contracts": "You haven't created any contracts yet.",
+        "create_first": "Create your first contract",
+        "my_contracts": "My Recent Contracts"
+    },
+    "landing": {
+        "hero_title": "Generate Secure Smart Contracts in Seconds",
+        "hero_subtitle": "No coding required. Deploy audit-ready tokens, NFTs, and DAOs with our drag-and-drop builder.",
+        "cta_new": "New Contract",
+        "cta_view": "View Templates",
+        "feat_instant_title": "Instant Generation",
+        "feat_instant_desc": "Get your solidity code instantly. Optimized for gas and security.",
+        "feat_audit_title": "Pre-Audited",
+        "feat_audit_desc": "Templates checked by industry experts to prevent common vulnerabilities.",
+        "feat_custom_title": "Full Customization",
+        "feat_custom_desc": "Customize supply, permissions, and features with a simple UI."
+    },
+    "generator": {
+        "title": "Generator",
+        "subtitle": "Customize your Smart Contract",
+        "preview": "Contract Preview",
+        "labels": {
+            "name": "Name",
+            "symbol": "Symbol",
+            "premint": "Premint Amount",
+            "baseURI": "Base URI",
+            "votingDelay": "Voting Delay (blocks)",
+            "votingPeriod": "Voting Period (blocks)",
+            "proposalThreshold": "Proposal Threshold",
+            "mintable": "Mintable",
+            "burnable": "Burnable",
+            "pausable": "Pausable",
+            "ownable": "Ownable",
+            "uriStorage": "URI Storage",
+            "enumerable": "Enumerable",
+            "timelock": "Timelock Controller"
+        }
+    }
+}

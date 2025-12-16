@@ -1,0 +1,64 @@
+{
+    "common": {
+        "login": "Anmelden",
+        "getStarted": "Loslegen",
+        "features": "Funktionen",
+        "pricing": "Preise",
+        "templates": "Vorlagen",
+        "download": "Herunterladen (.sol)",
+        "deploy": "Bereitstellen (Testnet)",
+        "security": "Sicherheit",
+        "audit_desc": "Verwendet OpenZeppelin 5.x Verträge. Geprüfte Vorlagen.",
+        "tutorial": "Anleitung",
+        "dashboard": "Dashboard"
+    },
+    "tutorial": {
+        "title": "So nutzen Sie den Generator",
+        "step1_title": "Wählen Sie Ihren Standard",
+        "step1_desc": "Wählen Sie ERC20 (Token), ERC721 (NFTs) oder Governor (DAO) je nach Bedarf.",
+        "step2_title": "Anpassen",
+        "step2_desc": "Definieren Sie Name, Symbol und aktivieren Sie Funktionen wie Mintable oder Pausable.",
+        "step3_title": "Herunterladen oder Bereitstellen",
+        "step3_desc": "Holen Sie sich den Quellcode oder stellen Sie ihn direkt im Testnet bereit."
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "welcome": "Willkommen in Ihrem Bereich",
+        "no_contracts": "Sie haben noch keine Verträge erstellt.",
+        "create_first": "Erstellen Sie Ihren ersten Vertrag",
+        "my_contracts": "Meine letzten Verträge"
+    },
+    "landing": {
+        "hero_title": "Erstellen Sie sichere Smart Contracts in Sekunden",
+        "hero_subtitle": "Kein Code erforderlich. Bereitstellung von prüfungsbereiten Token, NFTs und DAOs.",
+        "cta_new": "Neuer Vertrag",
+        "cta_view": "Vorlagen ansehen",
+        "feat_instant_title": "Sofortige Generierung",
+        "feat_instant_desc": "Erhalten Sie Ihren Solidity-Code sofort. Optimiert für Gas und Sicherheit.",
+        "feat_audit_title": "Vorgeprüft",
+        "feat_audit_desc": "Vorlagen von Experten geprüft, um häufige Schwachstellen zu vermeiden.",
+        "feat_custom_title": "Volle Anpassung",
+        "feat_custom_desc": "Passen Sie Angebot, Berechtigungen und Funktionen mit einer einfachen Oberfläche an."
+    },
+    "generator": {
+        "title": "Generator",
+        "subtitle": "Passen Sie Ihren Smart Contract an",
+        "preview": "Vertragsvorschau",
+        "labels": {
+            "name": "Name",
+            "symbol": "Symbol",
+            "premint": "Vormining-Betrag",
+            "baseURI": "Basis-URI",
+            "votingDelay": "Abstimmungsverzögerung",
+            "votingPeriod": "Abstimmungszeitraum",
+            "proposalThreshold": "Vorschlagsschwelle",
+            "mintable": "Prägbar (Mintable)",
+            "burnable": "Verbrennbar (Burnable)",
+            "pausable": "Pausierbar",
+            "ownable": "Besitzbar",
+            "uriStorage": "URI-Speicher",
+            "enumerable": "Aufzählbar",
+            "timelock": "Timelock-Controller"
+        }
+    }
+}

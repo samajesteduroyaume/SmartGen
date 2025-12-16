@@ -1,0 +1,64 @@
+{
+    "common": {
+        "login": "Connexion",
+        "getStarted": "Commencer",
+        "features": "Fonctionnalités",
+        "pricing": "Tarifs",
+        "templates": "Modèles",
+        "download": "Télécharger (.sol)",
+        "deploy": "Déployer (Testnet)",
+        "security": "Sécurité",
+        "audit_desc": "Utilise les contrats OpenZeppelin 5.x. Modèles audités.",
+        "tutorial": "Tutoriel",
+        "dashboard": "Tableau de Bord"
+    },
+    "tutorial": {
+        "title": "Comment utiliser le Générateur",
+        "step1_title": "Choisissez votre Standard",
+        "step1_desc": "Sélectionnez ERC20 (Tokens), ERC721 (NFTs) ou Governor (DAO) selon vos besoins.",
+        "step2_title": "Personnalisez",
+        "step2_desc": "Définissez le nom, le symbole et activez les fonctionnalités comme Mintable ou Pausable.",
+        "step3_title": "Téléchargez ou Déployez",
+        "step3_desc": "Récupérez le code source ou déployez directement sur le Testnet pour tester."
+    },
+    "dashboard": {
+        "title": "Tableau de Bord",
+        "welcome": "Bienvenue sur votre espace",
+        "no_contracts": "Vous n'avez pas encore créé de contrats.",
+        "create_first": "Créez votre premier contrat",
+        "my_contracts": "Mes Contrats Récents"
+    },
+    "landing": {
+        "hero_title": "Générez des Smart Contracts Sécurisés en quelques secondes",
+        "hero_subtitle": "Aucun code requis. Déployez des tokens, NFTs et DAOs prêts pour l'audit avec notre outil.",
+        "cta_new": "Nouveau Contrat",
+        "cta_view": "Voir les Modèles",
+        "feat_instant_title": "Génération Instantanée",
+        "feat_instant_desc": "Obtenez votre code Solidity instantanément. Optimisé pour le gaz et la sécurité.",
+        "feat_audit_title": "Pré-Audité",
+        "feat_audit_desc": "Modèles vérifiés par des experts pour éviter les vulnérabilités courantes.",
+        "feat_custom_title": "Personnalisation Totale",
+        "feat_custom_desc": "Personnalisez l'offre, les permissions et les fonctionnalités avec une interface simple."
+    },
+    "generator": {
+        "title": "Générateur",
+        "subtitle": "Personnalisez votre Smart Contract",
+        "preview": "Aperçu du Contrat",
+        "labels": {
+            "name": "Nom",
+            "symbol": "Symbole",
+            "premint": "Montant Pré-mint",
+            "baseURI": "URI de Base",
+            "votingDelay": "Délai de Vote (blocs)",
+            "votingPeriod": "Période de Vote (blocs)",
+            "proposalThreshold": "Seuil de Proposition",
+            "mintable": "Mintable (Créable)",
+            "burnable": "Burnable (Brûlable)",
+            "pausable": "Pausable (Mettable en pause)",
+            "ownable": "Ownable (Possédable)",
+            "uriStorage": "Stockage URI",
+            "enumerable": "Enumérable",
+            "timelock": "Contrôleur Timelock"
+        }
+    }
+}
